@@ -255,13 +255,42 @@ void train(){
 }
 
 void test(){
+    NN nn({28*28, 128, 128, 10});
+    ifstream test("mnist_test.csv");
 
+    string in;
+    test >> in;
+    vvd inputs;
+    vl labelsNum;
+    while(test >> in){
+        stringstream ss(in);
+        string val;
+        getline(ss, val, ',');
+        labelsNum.pb(stoll(val));
+        vd inp;
+        fo(i, 28*28){
+            getline(ss, val, ',');
+            inp.pb(stod(val)/255.0);
+        }
+        inputs.pb(inp);
+    }
+
+    double loss = 0;
+    ll correct = 0;
+    fo(i, inputs.size()){
+        vd label(10, 0);
+        label[labelsNum[i]] = 1;
+        if(nn.predict(inputs[i]) == labelsNum[i]) correct++;
+    }
+    
+    cout << "Test Accuracy: " << ((double)correct/inputs.size())*100 << "%" << endl;
 }
 
 int main() {
     cin.tie(0)->sync_with_stdio(0);
 
-    train();
+    // train();
+    test();
 
     return 0;
 }
